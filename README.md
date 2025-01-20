@@ -1,111 +1,143 @@
 # IPATool
-[![Release](https://img.shields.io/github/release/majd/ipatool.svg)](https://GitHub.com/majd/ipatool/releases/)
-![Swift](https://img.shields.io/badge/Swift-5.4-green.svg)
-![macOS](https://img.shields.io/badge/macOS-10.15%2B-green.svg)
+
+[![Release](https://img.shields.io/github/release/majd/ipatool.svg?label=Release)](https://GitHub.com/majd/ipatool/releases/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/majd/ipatool/blob/main/LICENSE)
 
 `ipatool` is a command line tool that allows you to search for iOS apps on the [App Store](https://apps.apple.com) and download a copy of the app package, known as an _ipa_ file.
 
 ![Demo](./demo.gif)
 
+- [Requirements](#requirements)
+- [Installation](#installation)
+  - [Manual](#manual)
+  - [Package Manager (macOS)](#package-manager-macos)
+- [Usage](#usage)
+- [Compiling](#compiling)
+- [License](#license)
+- [Changelog](https://github.com/majd/ipatool/blob/main/CHANGELOG.md)
+- [FAQ](https://github.com/majd/ipatool/wiki/FAQ)
+
 ## Requirements
-* macOS 10.15 or later.
-* Apple ID set up to use the App Store.
+- Supported operating system (Windows, Linux or macOS).
+- Apple ID set up to use the App Store.
 
 ## Installation
 
-### Manual Install
+### Manual
 
 You can grab the latest version of `ipatool` from [GitHub releases](https://github.com/majd/ipatool/releases).
 
-### Homebrew
+### Package Manager (macOS)
 
 You can install `ipatool` using [Homebrew](https://brew.sh).
 
-```
+```shell
 $ brew tap majd/repo
 $ brew install ipatool
 ```
 
 ## Usage
 
-To search for apps on the App Store, use the `search` command.
+To authenticate with the App Store, use the `auth` command.
 
 ```
-OVERVIEW: Search for iOS apps available on the App Store.
+Authenticate with the App Store
 
-USAGE: ipatool search <term> [--limit <limit>] [--country <country>] [--device-family <device-family>] [--log-level <log-level>]
+Usage:
+  ipatool auth [command]
 
-ARGUMENTS:
-  <term>                  The term to search for. 
+Available Commands:
+  info        Show current account info
+  login       Login to the App Store
+  revoke      Revoke your App Store credentials
 
-OPTIONS:
-  -l, --limit <limit>     The maximum amount of search results to retrieve.
-                          (default: 5)
-  -c, --country <country> The two-letter (ISO 3166-1 alpha-2) country code for
-                          the iTunes Store. (default: US)
-  -d, --device-family <device-family>
-                          The device family to limit the search query to.
-                          (default: iPhone)
-  --log-level <log-level> The log level. (default: info)
-  --version               Show the version.
-  -h, --help              Show help information.
+Flags:
+  -h, --help   help for auth
+
+Global Flags:
+      --format format     sets output format for command; can be 'text', 'json' (default text)
+      --non-interactive   run in non-interactive session
+      --verbose           enables verbose logs
+
+Use "ipatool auth [command] --help" for more information about a command.
+```
+
+To search for apps on the App Store, use the `search` command.
+
+```
+Search for iOS apps available on the App Store
+
+Usage:
+  ipatool search <term> [flags]
+
+Flags:
+  -h, --help        help for search
+  -l, --limit int   maximum amount of search results to retrieve (default 5)
+
+Global Flags:
+      --format format     sets output format for command; can be 'text', 'json' (default text)
+      --non-interactive   run in non-interactive session
+      --verbose           enables verbose logs
+```
+
+To obtain a license for an app, use the `purchase` command.
+
+```
+Obtain a license for the app from the App Store
+
+Usage:
+  ipatool purchase [flags]
+
+Flags:
+  -b, --bundle-identifier string   Bundle identifier of the target iOS app (required)
+  -h, --help                       help for purchase
+
+Global Flags:
+      --format format     sets output format for command; can be 'text', 'json' (default text)
+      --non-interactive   run in non-interactive session
+      --verbose           enables verbose logs
 ```
 
 To download a copy of the ipa file, use the `download` command.
 
 ```
-OVERVIEW: Download (encrypted) iOS app packages from the App Store.
+Download (encrypted) iOS app packages from the App Store
 
-USAGE: ipatool download --bundle-identifier <bundle-identifier> [--email <email>] [--password <password>] [--auth-code <auth-code>] [--country <country>] [--device-family <device-family>] [--log-level <log-level>]
+Usage:
+  ipatool download [flags]
 
-OPTIONS:
-  -b, --bundle-identifier <bundle-identifier>
-                          The bundle identifier of the target iOS app. 
-  -e, --email <email>     The email address for the Apple ID. 
-  -p, --password <password>
-                          The password for the Apple ID. 
-  --auth-code <auth-code> The 2FA code for the Apple ID. 
-  -c, --country <country> The two-letter (ISO 3166-1 alpha-2) country code for the iTunes Store. (default: US)
-  -d, --device-family <device-family>
-                          The device family to limit the search query to. (default: iPhone)
-  --log-level <log-level> The log level. (default: info)
-  --version               Show the version.
-  -h, --help              Show help information.
+Flags:
+  -i, --app-id int                 ID of the target iOS app (required)
+  -b, --bundle-identifier string   The bundle identifier of the target iOS app (overrides the app ID)
+  -h, --help                       help for download
+  -o, --output string              The destination path of the downloaded app package
+      --purchase                   Obtain a license for the app if needed
+
+Global Flags:
+      --format format                sets output format for command; can be 'text', 'json' (default text)
+      --keychain-passphrase string   passphrase for unlocking keychain
+      --non-interactive              run in non-interactive session
+      --verbose                      enables verbose logs
 ```
 
-**Note:** You can specify the Apple ID email address and username as arguments when using the tool or by setting them as environment variables (`IPATOOL_EMAIL` and `IPATOOL_PASSWORD`). If you do not specify this information using either of those methods, the tool will prompt for user input in an interactive session. Similarly, you can supply the 2FA code interactively or using the environment variable `IPATOOL_2FA_CODE`.
+**Note:** the tool runs in interactive mode by default. Use the `--non-interactive` flag
+if running in an automated environment.
 
-## Common Knowledge
+## Compiling
 
-**Are my Apple ID credentials stored safely?**
+The tool can be compiled using the Go toolchain.
 
-The tool does not store your credentials anywhere and it only communicates with Apple servers directly. Feel free to go through the source code.
-
-**Will my Apple ID get flagged for using this tool?**
-
-Maybe, but probably not. While this tool communicates with iTunes and the App Store directly, mimicking the behavior of iTunes running on macOS, I cannot guarantee its safety. I recommend using a throwaway Apple ID. **Use this tool at your own risk**.
-
-**Can I use this tool to download paid apps without paying for them?**
-
-**No**. This is is not a piracy tool; you can only download apps that you have previously installed on your iOS device. This limitation applies to free apps as well. Essentially, your account must already have a license for the app you are trying to download.
-
-**Can I use this tool to sideload unsupported iOS apps on Apple Silicon Macs?**
-
-While it was previously possible to download ipa files using this tool and install them on Macs running on Apple Silicon, this is no longer the case as of recently. Apple stopped serving macOS compatible `sinf` data for the app package. You could, however, use this tool to get a copy of the iOS app and use a jailbroken iOS device to strip any codesigning requirements then codesign the app again using an adhoc signature to run on Apple Silicon.
-
-## Troubleshooting
-
-If `ipatool download` fails with the following error despite providing
-correct email/password/auth code:
-
-```
-==> ℹ️  [Info] Querying the iTunes Store for '<bundle-identifier>' in country '<country>'...
-==> ℹ️  [Info] Authenticating with the App Store...
-==> ❌ [Error] An unknown error has occurred.
+```shell
+$ go build -o ipatool
 ```
 
-then see [issue #30](https://github.com/majd/ipatool/issues/30)
-(particularly [this
-comment](https://github.com/majd/ipatool/issues/30#issuecomment-977852648))
-for a fix. Note that you may need version 1.0.7 or later.
+Unit tests can be executed with the following commands.
+
+```shell
+$ go generate github.com/majd/ipatool/...
+$ go test -v github.com/majd/ipatool/...
+```
+
+## License
+
+IPATool is released under the [MIT license](https://github.com/majd/ipatool/blob/main/LICENSE).
